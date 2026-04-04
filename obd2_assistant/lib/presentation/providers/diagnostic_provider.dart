@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/diagnostic_result.dart';
-import '../../data/datasources/mock_api_service.dart';
+import '../../data/datasources/ai_api_service.dart';
 
 class DiagnosticProvider extends ChangeNotifier {
-  final MockApiService _apiService = MockApiService();
+  final AiApiService _apiService = AiApiService();
 
   DiagnosticResult? _result;
   bool _isLoading = false;
