@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "605043213220",
+    "project_id": "smart-obd-219eb",
+    "storage_bucket": "smart-obd-219eb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:605043213220:android:3ec34084ef7599519df731",
+        "android_client_info": {
+          "package_name": "com.example.obd2_assistant"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOdm9qnG1yZjGxFcGszLKDxLd-tWrDHaQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

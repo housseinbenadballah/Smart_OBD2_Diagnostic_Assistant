@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import '../../core/theme/app_colors.dart';
-import '../providers/diagnostic_provider.dart';
-import '../widgets/custom_text_field.dart';
-import '../widgets/glass_card.dart';
-import '../widgets/primary_button.dart';
+import 'home_dashboard_screen.dart';
+import 'diagnostic_screen.dart';
+import 'live_data_screen.dart';
+import 'can_console_screen.dart';
+import 'settings_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -15,192 +14,79 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final _dtcController = TextEditingController();
-  final _carModelController = TextEditingController();
+  int _selectedIndex = 0;
+  
+  final List<Widget> _screens = [
+    const HomeDashboardScreen(),
+    const DiagnosticScreen(),
+    const LiveDataScreen(),
+    const CanConsoleScreen(),
+    const SettingsScreen(),
+  ];
 
-  @override
-  void dispose() {
-    _dtcController.dispose();
-    _carModelController.dispose();
-    super.dispose();
-  }
-
-  void _analyze() {
-    FocusScope.of(context).unfocus();
-    context.read<DiagnosticProvider>().analyze(
-          _dtcController.text.trim(),
-          _carModelController.text.trim(),
-        );
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background decorative circles
-          Positioned(
-            top: -100,
-            right: -100,
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.primary.withOpacity(0.15),
-                    AppColors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: -50,
-            left: -100,
-            child: Container(
-              width: 250,
-              height: 250,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.accent.withOpacity(0.1),
-                    AppColors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
-          
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: AppSpacing.md),
-                  Text(
-                    'OBD2 Assistant',
-                    style: Theme.of(context).textTheme.displayMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    'Your Smart Diagnostic Companion',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-                  
-                  CustomTextField(
-                    controller: _dtcController,
-                    hintText: 'Enter DTC Code (e.g. P0301)',
-                    icon: Icons.code_rounded,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  CustomTextField(
-                    controller: _carModelController,
-                    hintText: 'Enter Car Model (e.g. Renault Clio)',
-                    icon: Icons.directions_car_rounded,
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  
-                  Consumer<DiagnosticProvider>(
-                    builder: (context, provider, child) {
-                      return PrimaryButton(
-                        text: 'Analyze with IA',
-                        isLoading: provider.isLoading,
-                        onPressed: _analyze,
-                      );
-                    },
-                  ),
-                  
-                  const SizedBox(height: AppSpacing.xl),
-                  
-                  Consumer<DiagnosticProvider>(
-                    builder: (context, provider, child) {
-                      if (provider.error != null) {
-                        return GlassCard(
-                          child: Text(
-                            provider.error!,
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: AppColors.error,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        );
-                      }
-                      
-                      if (provider.result != null) {
-                        final res = provider.result!;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _buildResultCard(
-                              context,
-                              title: 'Interpretation',
-                              content: res.interpretation,
-                              icon: Icons.info_outline_rounded,
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            _buildResultCard(
-                              context,
-                              title: 'Possible Causes',
-                              content: res.possibleCauses,
-                              icon: Icons.warning_amber_rounded,
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            _buildResultCard(
-                              context,
-                              title: 'Troubleshooting Steps',
-                              content: res.troubleshootingSteps,
-                              icon: Icons.build_circle_outlined,
-                            ),
-                          ],
-                        );
-                      }
-                      
-                      return const SizedBox.shrink();
-                    },
-                  ),
-                  const SizedBox(height: 100), // Bottom padding
-                ],
-              ),
-            ),
-          ),
-        ],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _screens,
       ),
-    );
-  }
-
-  Widget _buildResultCard(BuildContext context, {required String title, required String content, required IconData icon}) {
-    return GlassCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: AppColors.primary, size: 24),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          const Divider(color: AppColors.divider),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            content,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -4),
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: AppColors.surface,
+          selectedItemColor: AppColors.primary,
+          unselectedItemColor: AppColors.secondaryText,
+          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          unselectedLabelStyle: const TextStyle(fontSize: 12),
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_rounded),
+              activeIcon: Icon(Icons.home_rounded),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.medical_services_rounded),
+              activeIcon: Icon(Icons.medical_services_rounded),
+              label: 'Diagnostic',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.show_chart_rounded),
+              activeIcon: Icon(Icons.show_chart_rounded),
+              label: 'Live Data',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.build_rounded),
+              activeIcon: Icon(Icons.build_rounded),
+              label: 'Console',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings_rounded),
+              activeIcon: Icon(Icons.settings_rounded),
+              label: 'Settings',
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
