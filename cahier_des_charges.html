@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cahier des Charges - Smart OBD2 Diagnostic Assistant</title>
+    <style>
+        :root {
+            --primary: #2563EB;
+            --accent: #38BDF8;
+            --bg: #F8FAFC;
+            --text: #0F172A;
+            --secondary-text: #64748B;
+            --surface: #FFFFFF;
+        }
+
+        @media print {
+            body { background: white !important; }
+            .no-print { display: none; }
+            .page-break { page-break-before: always; }
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: var(--surface);
+            padding: 60px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border-radius: 12px;
+        }
+
+        .header {
+            border-bottom: 4px solid var(--primary);
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.5em;
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            color: var(--primary);
+            border-left: 4px solid var(--accent);
+            padding-left: 15px;
+            margin-top: 40px;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        h3 {
+            color: var(--text);
+            font-size: 1.3em;
+            margin-top: 30px;
+            border-bottom: 1px solid #E2E8F0;
+            padding-bottom: 5px;
+        }
+
+        p, li {
+            font-size: 1.1em;
+            color: #334155;
+        }
+
+        strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .project-info {
+            background: linear-gradient(135deg, #2563EB0F, #38BDF80F);
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #E2E8F0;
+            margin: 20px 0;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 0.9em;
+            color: var(--secondary-text);
+            border-top: 1px solid #E2E8F0;
+            padding-top: 20px;
+        }
+
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: all 0.2s;
+        }
+
+        .print-btn:hover {
+            background: #1D4ED8;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <button class="print-btn no-print" onclick="window.print()">Imprimer en PDF</button>
+
+    <div class="container">
+        <div class="header">
+            <div class="badge">Spécification Technique</div>
+            <h1>Cahier des Charges</h1>
+            <p style="font-size: 1.4em; color: var(--secondary-text); margin-top: 5px;">Smart OBD2 Diagnostic Assistant (AutoScan Pro)</p>
+        </div>
+
+        <section>
+            <h2>1. Présentation du Projet</h2>
+            <div class="project-info">
+                <p><strong>Nom du projet :</strong> Smart OBD2 Diagnostic Assistant (AutoScan Pro)</p>
+                <p><strong>Plateforme :</strong> Application mobile (Android / iOS)</p>
+                <p><strong>Technologie principale :</strong> Flutter / Dart</p>
+            </div>
+            <p>Le "Smart OBD2 Diagnostic Assistant" est une application mobile d'aide au diagnostic automobile de qualité professionnelle. Son but est d'accompagner les utilisateurs et techniciens dans l'interprétation des codes d'erreur (DTC - Diagnostic Trouble Codes) fournis par les scanners OBD2.</p>
+            <p>L'application utilise l'Intelligence Artificielle (via l'API hybride Groq LLM) pour fournir instantanément des analyses, des causes possibles et des guides de dépannage ciblés pour plus de 20 000 codes de constructeurs.</p>
+        </section>
+
+        <section>
+            <h2>2. Objectifs de l'Application</h2>
+            <ul>
+                <li><strong>Simplifier le diagnostic :</strong> Transformer des codes d'erreur bruts (ex: P0301) en informations compréhensibles et exploitables.</li>
+                <li><strong>Dépannage intelligent :</strong> Proposer des guides de réparation pas à pas spécifiques au modèle du véhicule.</li>
+                <li><strong>Interface intuitive :</strong> Fournir une interface moderne (style "Glassmorphism") facilitant la lecture et l'interaction.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>3. Fonctionnalités</h2>
+            <h3>3.1. Fonctionnalités Principales</h3>
+            <ul>
+                <li><strong>Saisie des Informations :</strong> Champs dédiés pour le code DTC et le modèle du véhicule.</li>
+                <li><strong>Analyse IA en Temps Réel :</strong> Intégration de Groq LLM pour une analyse ultra-rapide.</li>
+                <li><strong>Affichage Structuré :</strong> Cartes dédiées pour l'interprétation, les causes possibles et les étapes de résolution.</li>
+            </ul>
+            <h3>3.2. Évolutions Prévues</h3>
+            <ul>
+                <li><strong>Scanner Bluetooth :</strong> Connexion ELM327 pour lecture en temps réel.</li>
+                <li><strong>Historique :</strong> Sauvegarde locale des diagnostics effectués.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>4. Architecture Technique</h2>
+            <p>Le projet repose sur une <strong>Clean Architecture</strong> structurée en trois couches :</p>
+            <ul>
+                <li><strong>Domain :</strong> Entités pures et modèles de données (DiagnosticResult).</li>
+                <li><strong>Data :</strong> Services API et gestion de la configuration Firebase Remote Config.</li>
+                <li><strong>Presentation :</strong> Gestion d'état via Provider et UI réactive.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>5. Design & UI/UX</h2>
+            <p>L'esthétique globale suit les codes du <strong>Glassmorphism</strong> :</p>
+            <ul>
+                <li>Effets de flou d'arrière-plan (Backdrop Blur).</li>
+                <li>Gradients bleus modernes (#2563EB vers #38BDF8).</li>
+                <li>Support natif du Dark Mode.</li>
+                <li>Typographie : Police "Inter" pour une lisibilité maximale.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>6. Sécurité & Performance</h2>
+            <ul>
+                <li><strong>Gestion des Secrets :</strong> Utilisation de Firebase pour sécuriser les clés d'API (pas de hardcoding).</li>
+                <li><strong>Réseau :</strong> Gestion robuste des erreurs et des timeouts pour une expérience fluide.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>7. Livrables</h2>
+            <ul>
+                <li>Code source structuré (Clean Architecture).</li>
+                <li>Module de sécurité Firebase fonctionnel.</li>
+                <li>Documentation technique et diagrammes UML.</li>
+            </ul>
+        </section>
+
+        <div class="footer">
+            © 2026 Smart OBD2 Diagnostic Assistant - Document de Spécification Confidentiel
+        </div>
+    </div>
+</body>
+</html>

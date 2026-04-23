@@ -1,14 +1,33 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import '../../domain/entities/diagnostic_result.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 class AiApiService {
-  // Clé d'API intégrée directement comme demandé
-  final String _apiKey = "";
   final Dio _dio = Dio();
 
+  Future<String> _getApiKey() async {
+    try {
+      final remoteConfig = FirebaseRemoteConfig.instance;
+      // Pour le développement, on réduit le délai de rafraîchissement au minimum
+      await remoteConfig.setConfigSettings(RemoteConfigSettings(
+        fetchTimeout: const Duration(minutes: 1),
+        minimumFetchInterval: const Duration(hours: 1), // À changer en prod
+      ));
+      await remoteConfig.fetchAndActivate();
+      
+      final apiKey = remoteConfig.getString('groq_api_key');
+      if (apiKey.isEmpty) {
+        throw Exception("La clé d'API Groq est introuvable dans Firebase Remote Config.");
+      }
+      return apiKey;
+    } catch (e) {
+      throw Exception("Erreur lors de la récupération de la clé API: $e");
+    }
+  }
+
   Future<DiagnosticResult> analyzeDtc(String dtcCode, String carModel) async {
-    final String prompt = """
+    final String systemPrompt = """
 You are an automotive diagnostic assistant.
 You need to explain OBD-II codes in a clear and reassuring way for a driver.
 
@@ -34,10 +53,7 @@ Possible causes:
 3. Defective coolant temperature sensor
 Advise / troubleshooting actions: You can generally continue driving, but avoid repeated short trips as the engine isn't running at its ideal temperature, which can increase fuel consumption and wear.
 
-Now, provide your answer strictly in the JSON format below.
-
-DTC Code: $dtcCode
-Vehicle Model: $carModel
+Now, provide your answer strictly in the JSON format below:
 
 {
   "code": "",
@@ -52,12 +68,19 @@ Vehicle Model: $carModel
 }
 """;
 
+    final String userPrompt = """
+DTC Code: $dtcCode
+Vehicle Model: $carModel
+""";
+
     try {
+      final apiKey = await _getApiKey();
+
       final response = await _dio.post(
         'https://api.groq.com/openai/v1/chat/completions',
         options: Options(
           headers: {
-            'Authorization': 'Bearer $_apiKey',
+            'Authorization': 'Bearer $apiKey',
             'Content-Type': 'application/json',
           },
         ),
@@ -65,8 +88,12 @@ Vehicle Model: $carModel
           'model': 'llama-3.3-70b-versatile',
           'messages': [
             {
+              'role': 'system',
+              'content': systemPrompt,
+            },
+            {
               'role': 'user',
-              'content': prompt,
+              'content': userPrompt,
             }
           ],
           'temperature': 0.7,
